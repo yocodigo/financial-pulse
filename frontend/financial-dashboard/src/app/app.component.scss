@@ -1,0 +1,84 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #fafafa;
+}
+
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.toolbar-title {
+  margin-left: 8px;
+  font-size: 1.2rem;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.menu-button {
+  margin-right: 8px;
+}
+
+.content {
+  padding: 20px;
+  margin-top: 64px; // Height of toolbar
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.provider-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+.provider-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+// Responsive styles
+@media (max-width: 600px) {
+  .sidenav {
+    width: 200px;
+  }
+
+  .toolbar-title {
+    font-size: 1rem;
+  }
+
+  .content {
+    padding: 12px;
+  }
+
+  .provider-badge {
+    span {
+      display: none;
+    }
+  }
+}
+
+// Active route styles
+.active {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: #3f51b5;
+}

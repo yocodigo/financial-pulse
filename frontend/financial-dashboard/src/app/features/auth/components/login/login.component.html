@@ -1,0 +1,70 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Financial Dashboard Login</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="provider-selector">
+        <button mat-button
+                [class.active]="selectedProvider === 'schwab'"
+                (click)="switchProvider('schwab')">
+          <img src="assets/schwab-logo.png" alt="Schwab" class="provider-logo">
+          Schwab
+        </button>
+        <button mat-button
+                [class.active]="selectedProvider === 'fidelity'"
+                (click)="switchProvider('fidelity')">
+          <img src="assets/fidelity-logo.png" alt="Fidelity" class="provider-logo">
+          Fidelity
+        </button>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput
+                 type="email"
+                 formControlName="username"
+                 placeholder="Enter your email"
+                 required>
+          <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('username')?.hasError('email')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput
+                 type="password"
+                 formControlName="password"
+                 placeholder="Enter your password"
+                 required>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+            Password must be at least 8 characters long
+          </mat-error>
+        </mat-form-field>
+
+        <div *ngIf="error" class="error-message">
+          <mat-icon>error</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="loginForm.invalid || loading"
+                class="login-button">
+          <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+          <span *ngIf="!loading">Login</span>
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div> 

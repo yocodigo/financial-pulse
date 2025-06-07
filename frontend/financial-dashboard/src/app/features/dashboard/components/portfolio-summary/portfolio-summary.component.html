@@ -1,0 +1,69 @@
+<div class="portfolio-container">
+  <div class="portfolio-header">
+    <h2>Portfolio Summary</h2>
+    <div class="refresh-button" (click)="loadPortfolioData()">
+      <mat-icon>refresh</mat-icon>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="portfolioData && !loading && !error" class="portfolio-content">
+    <div class="summary-cards">
+      <mat-card class="total-value-card">
+        <mat-card-header>
+          <mat-card-title>Total Portfolio Value</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="value">{{ formatCurrency(portfolioData.totalValue) }}</div>
+          <div class="change" [ngClass]="{'positive': portfolioData.dailyChange >= 0, 'negative': portfolioData.dailyChange < 0}">
+            {{ formatCurrency(portfolioData.dailyChange) }}
+            ({{ formatPercentage(portfolioData.dailyChangePercentage) }})
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="holdings-table">
+      <table mat-table [dataSource]="portfolioData.holdings" class="mat-elevation-z2">
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef>Symbol</th>
+          <td mat-cell *matCellDef="let holding">{{ holding.symbol }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let holding">{{ holding.quantity }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="currentPrice">
+          <th mat-header-cell *matHeaderCellDef>Current Price</th>
+          <td mat-cell *matCellDef="let holding">{{ formatCurrency(holding.currentPrice) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Value</th>
+          <td mat-cell *matCellDef="let holding">{{ formatCurrency(holding.value) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="change">
+          <th mat-header-cell *matHeaderCellDef>Change</th>
+          <td mat-cell *matCellDef="let holding" [ngClass]="{'positive': holding.change >= 0, 'negative': holding.change < 0}">
+            {{ formatCurrency(holding.change) }}
+            ({{ formatPercentage(holding.changePercentage) }})
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['symbol', 'quantity', 'currentPrice', 'value', 'change']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['symbol', 'quantity', 'currentPrice', 'value', 'change'];"></tr>
+      </table>
+    </div>
+  </div>
+</div>

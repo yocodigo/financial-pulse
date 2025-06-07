@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: financial-dashboard
+  datasource:
+    url: jdbc:postgresql://localhost:5432/financial_dashboard
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+honeycomb:
+  api:
+    key: ${HONEYCOMB_API_KEY:your-api-key-here}
+  service:
+    name: ${HONEYCOMB_SERVICE_NAME:financial-dashboard}
+  dataset: financial-dashboard
+
+market:
+  alpha:
+    vantage:
+      api:
+        key: ${ALPHA_VANTAGE_API_KEY}
+  finnhub:
+    api:
+      key: ${FINNHUB_API_KEY}
+  yahoo:
+    finance:
+      api:
+        key: ${YAHOO_FINANCE_API_KEY}
+
+logging:
+  level:
+    root: INFO
+    com.financialdashboard: DEBUG
+    org.springframework.cache: DEBUG
+    org.hibernate.SQL: DEBUG 

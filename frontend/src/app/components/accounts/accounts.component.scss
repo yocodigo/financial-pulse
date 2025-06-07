@@ -1,0 +1,249 @@
+.accounts-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .summary-section {
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+
+      .summary-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-radius: 8px;
+
+        .label {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.6);
+          margin-bottom: 8px;
+        }
+
+        .value {
+          font-size: 24px;
+          font-weight: 500;
+
+          &.positive {
+            color: #4caf50;
+          }
+
+          &.negative {
+            color: #f44336;
+          }
+        }
+      }
+    }
+
+    .balance-chart {
+      height: 300px;
+      margin-top: 20px;
+    }
+  }
+
+  .accounts-section {
+    .account-form {
+      margin-bottom: 20px;
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        align-items: end;
+      }
+    }
+
+    .accounts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+
+      .account-card {
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        .account-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+
+          mat-icon {
+            color: #3f51b5;
+          }
+
+          .account-info {
+            flex: 1;
+
+            h3 {
+              margin: 0;
+              font-size: 18px;
+            }
+
+            .account-type {
+              font-size: 14px;
+              color: rgba(0, 0, 0, 0.6);
+            }
+          }
+        }
+
+        .account-details {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 12px;
+
+          .detail-item {
+            display: flex;
+            flex-direction: column;
+
+            .label {
+              font-size: 12px;
+              color: rgba(0, 0, 0, 0.6);
+            }
+
+            .value {
+              font-size: 14px;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .selected-account-section {
+    .transaction-form,
+    .transfer-form {
+      margin-bottom: 20px;
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        align-items: end;
+      }
+    }
+
+    .transactions-list {
+      h3 {
+        margin: 20px 0;
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .transaction-card {
+        margin-bottom: 12px;
+
+        .transaction-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 8px;
+
+          mat-icon {
+            color: #3f51b5;
+          }
+
+          .transaction-info {
+            flex: 1;
+
+            h4 {
+              margin: 0;
+              font-size: 16px;
+            }
+
+            .transaction-category {
+              font-size: 12px;
+              color: rgba(0, 0, 0, 0.6);
+            }
+          }
+
+          .transaction-amount {
+            font-size: 16px;
+            font-weight: 500;
+
+            &.positive {
+              color: #4caf50;
+            }
+
+            &.negative {
+              color: #f44336;
+            }
+          }
+        }
+
+        .transaction-details {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 12px;
+          color: rgba(0, 0, 0, 0.6);
+
+          .transaction-status {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+
+            &.completed {
+              background-color: #e8f5e9;
+              color: #2e7d32;
+            }
+
+            &.pending {
+              background-color: #fff3e0;
+              color: #ef6c00;
+            }
+
+            &.failed {
+              background-color: #ffebee;
+              color: #c62828;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media screen and (max-width: 600px) {
+  .accounts-container {
+    padding: 10px;
+
+    .summary-section {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .balance-chart {
+        height: 200px;
+      }
+    }
+
+    .accounts-section {
+      .accounts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .selected-account-section {
+      .transaction-form,
+      .transfer-form {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+} 

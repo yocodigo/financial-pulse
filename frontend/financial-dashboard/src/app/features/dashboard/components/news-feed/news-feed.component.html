@@ -1,0 +1,44 @@
+<div class="news-container">
+  <div class="news-header">
+    <h2>Financial News</h2>
+    <div class="refresh-button" (click)="loadNews()">
+      <mat-icon>refresh</mat-icon>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="newsItems.length > 0 && !loading && !error" class="news-content">
+    <mat-card *ngFor="let news of newsItems" class="news-card" (click)="openNewsUrl(news.url)">
+      <mat-card-header>
+        <mat-card-title>{{ news.title }}</mat-card-title>
+        <mat-card-subtitle>
+          <span class="source">{{ news.source }}</span>
+          <span class="category">{{ news.category }}</span>
+          <span class="date">{{ formatDate(news.publishedAt) }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ news.description }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">
+          Read More
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div *ngIf="newsItems.length === 0 && !loading && !error" class="no-news">
+    <mat-icon>newspaper</mat-icon>
+    <p>No news available at the moment.</p>
+  </div>
+</div>

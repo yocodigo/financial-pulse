@@ -1,0 +1,72 @@
+<div class="market-container">
+  <div class="market-header">
+    <h2>Market Overview</h2>
+    <div class="refresh-button" (click)="loadMarketData()">
+      <mat-icon>refresh</mat-icon>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="marketData && !loading && !error" class="market-content">
+    <!-- Market Indices -->
+    <div class="section">
+      <h3>Market Indices</h3>
+      <div class="indices-grid">
+        <mat-card *ngFor="let index of marketData.indices" class="index-card">
+          <mat-card-header>
+            <mat-card-title>{{ index.name }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="value">{{ formatCurrency(index.value) }}</div>
+            <div class="change" [ngClass]="{'positive': index.change >= 0, 'negative': index.change < 0}">
+              {{ formatCurrency(index.change) }}
+              ({{ formatPercentage(index.changePercentage) }})
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Cryptocurrencies -->
+    <div class="section">
+      <h3>Cryptocurrencies</h3>
+      <div class="crypto-table">
+        <table mat-table [dataSource]="marketData.crypto" class="mat-elevation-z2">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let crypto">{{ crypto.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>Price</th>
+            <td mat-cell *matCellDef="let crypto">{{ formatCurrency(crypto.price) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="change24h">
+            <th mat-header-cell *matHeaderCellDef>24h Change</th>
+            <td mat-cell *matCellDef="let crypto" [ngClass]="{'positive': crypto.change24h >= 0, 'negative': crypto.change24h < 0}">
+              {{ formatCurrency(crypto.change24h) }}
+              ({{ formatPercentage(crypto.changePercentage24h) }})
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="marketCap">
+            <th mat-header-cell *matHeaderCellDef>Market Cap</th>
+            <td mat-cell *matCellDef="let crypto">{{ formatMarketCap(crypto.marketCap) }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['name', 'price', 'change24h', 'marketCap']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['name', 'price', 'change24h', 'marketCap'];"></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

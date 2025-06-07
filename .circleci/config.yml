@@ -1,0 +1,92 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.1.0
+  maven: circleci/maven@2.2.0
+  podman: circleci/podman@1.0.0
+
+jobs:
+  test-backend:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - maven/with-cache:
+          steps:
+            - run: mvn test
+
+  test-frontend:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: cd frontend && npm install
+            - run: cd frontend && npm test
+
+  build-backend:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - maven/with-cache:
+          steps:
+            - run: mvn clean package -DskipTests
+      - podman/build:
+          image: financial-dashboard-backend
+          path: ./backend
+          tag: $CIRCLE_SHA1
+
+  build-frontend:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: cd frontend && npm install
+            - run: cd frontend && npm run build
+      - podman/build:
+          image: financial-dashboard-frontend
+          path: ./frontend
+          tag: $CIRCLE_SHA1
+
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - podman/push:
+          image: financial-dashboard-backend
+          tag: $CIRCLE_SHA1
+          registry: your-registry
+      - podman/push:
+          image: financial-dashboard-frontend
+          tag: $CIRCLE_SHA1
+          registry: your-registry
+      - run:
+          name: Deploy to production
+          command: |
+            # Add your deployment commands here
+            echo "Deploying to production..."
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test-backend
+      - test-frontend
+      - build-backend:
+          requires:
+            - test-backend
+      - build-frontend:
+          requires:
+            - test-frontend
+      - deploy:
+          requires:
+            - build-backend
+            - build-frontend
+          filters:
+            branches:
+              only: main 

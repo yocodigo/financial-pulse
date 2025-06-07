@@ -1,0 +1,227 @@
+<div class="accounts-container">
+  <!-- Account Summary Section -->
+  <mat-card class="summary-section">
+    <mat-card-header>
+      <mat-card-title>Account Summary</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="summary-grid" *ngIf="accountSummary">
+        <div class="summary-item">
+          <span class="label">Total Balance</span>
+          <span class="value">{{ accountSummary.totalBalance | currency }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Total Income</span>
+          <span class="value positive">{{ accountSummary.totalIncome | currency }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Total Expenses</span>
+          <span class="value negative">{{ accountSummary.totalExpenses | currency }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Accounts</span>
+          <span class="value">{{ accountSummary.accountCount }}</span>
+        </div>
+      </div>
+      <div class="balance-chart">
+        <canvas #balanceChart></canvas>
+      </div>
+      <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Accounts List Section -->
+  <mat-card class="accounts-section">
+    <mat-card-header>
+      <mat-card-title>Accounts</mat-card-title>
+      <button mat-icon-button (click)="accountForm.reset()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="accountForm" (ngSubmit)="onCreateAccount()" class="account-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Account Name</mat-label>
+            <input matInput formControlName="name" placeholder="e.g., Main Checking">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Account Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="CHECKING">Checking</mat-option>
+              <mat-option value="SAVINGS">Savings</mat-option>
+              <mat-option value="INVESTMENT">Investment</mat-option>
+              <mat-option value="CREDIT">Credit</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Currency</mat-label>
+            <input matInput formControlName="currency" placeholder="e.g., USD">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Institution</mat-label>
+            <input matInput formControlName="institution" placeholder="e.g., Bank of America">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Account Number</mat-label>
+            <input matInput formControlName="accountNumber" placeholder="e.g., XXXX-XXXX-XXXX-1234">
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="accountForm.invalid">
+            Create Account
+          </button>
+        </div>
+      </form>
+
+      <div class="accounts-grid">
+        <mat-card *ngFor="let account of accounts" class="account-card" (click)="onAccountSelect(account)">
+          <mat-card-content>
+            <div class="account-header">
+              <mat-icon>{{ getAccountTypeIcon(account.type) }}</mat-icon>
+              <div class="account-info">
+                <h3>{{ account.name }}</h3>
+                <span class="account-type">{{ account.type }}</span>
+              </div>
+              <button mat-icon-button (click)="onDeleteAccount(account.id); $event.stopPropagation()">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <div class="account-details">
+              <div class="detail-item">
+                <span class="label">Balance</span>
+                <span class="value">{{ account.balance | currency }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Institution</span>
+                <span class="value">{{ account.institution }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Last Updated</span>
+                <span class="value">{{ account.lastUpdated | date:'short' }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Selected Account Section -->
+  <mat-card class="selected-account-section" *ngIf="selectedAccount">
+    <mat-card-header>
+      <mat-card-title>{{ selectedAccount.name }}</mat-card-title>
+      <mat-card-subtitle>{{ selectedAccount.type }} - {{ selectedAccount.institution }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Transaction Form -->
+      <form [formGroup]="transactionForm" (ngSubmit)="onCreateTransaction()" class="transaction-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Transaction Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="DEPOSIT">Deposit</mat-option>
+              <mat-option value="WITHDRAWAL">Withdrawal</mat-option>
+              <mat-option value="TRANSFER">Transfer</mat-option>
+              <mat-option value="INVESTMENT">Investment</mat-option>
+              <mat-option value="DIVIDEND">Dividend</mat-option>
+              <mat-option value="INTEREST">Interest</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount" placeholder="0.00">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description" placeholder="Transaction description">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Category</mat-label>
+            <input matInput formControlName="category" placeholder="Transaction category">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="transactionForm.invalid">
+            Add Transaction
+          </button>
+        </div>
+      </form>
+
+      <!-- Transfer Form -->
+      <form [formGroup]="transferForm" (ngSubmit)="onTransferFunds()" class="transfer-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>From Account</mat-label>
+            <mat-select formControlName="fromAccountId">
+              <mat-option *ngFor="let account of accounts" [value]="account.id">
+                {{ account.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>To Account</mat-label>
+            <mat-select formControlName="toAccountId">
+              <mat-option *ngFor="let account of accounts" [value]="account.id">
+                {{ account.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount" placeholder="0.00">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description" placeholder="Transfer description">
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="transferForm.invalid">
+            Transfer Funds
+          </button>
+        </div>
+      </form>
+
+      <!-- Transactions List -->
+      <div class="transactions-list">
+        <h3>Recent Transactions</h3>
+        <mat-card *ngFor="let transaction of transactions" class="transaction-card">
+          <mat-card-content>
+            <div class="transaction-header">
+              <mat-icon>{{ getTransactionTypeIcon(transaction.type) }}</mat-icon>
+              <div class="transaction-info">
+                <h4>{{ transaction.description }}</h4>
+                <span class="transaction-category">{{ transaction.category }}</span>
+              </div>
+              <span class="transaction-amount" [class.positive]="transaction.type === 'DEPOSIT' || transaction.type === 'DIVIDEND' || transaction.type === 'INTEREST'"
+                [class.negative]="transaction.type === 'WITHDRAWAL'">
+                {{ transaction.amount | currency }}
+              </span>
+            </div>
+            <div class="transaction-details">
+              <span class="transaction-date">{{ transaction.date | date:'short' }}</span>
+              <span class="transaction-status" [class]="transaction.status.toLowerCase()">
+                {{ transaction.status }}
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

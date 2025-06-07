@@ -1,0 +1,109 @@
+<div class="dashboard-container">
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="card-title">Total Portfolio Value</div>
+        <div class="card-value">${{summary?.totalPortfolioValue | number:'1.2-2'}}</div>
+        <div class="card-change" [ngClass]="{'positive': summary?.gainLossPercentage > 0, 'negative': summary?.gainLossPercentage < 0}">
+          {{summary?.gainLossPercentage | number:'1.2-2'}}%
+          ({{summary?.totalGainLoss | number:'1.2-2'}})
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="card-title">Accounts</div>
+        <div class="accounts-list">
+          <div *ngFor="let account of summary?.accountBalances" class="account-item">
+            <span>{{account.accountName}}</span>
+            <span>${{account.balance | number:'1.2-2'}}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-container">
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Portfolio Value History</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas #portfolioChart></canvas>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Asset Allocation</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas #allocationChart></canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Holdings and Activity -->
+  <div class="details-container">
+    <mat-card class="holdings-card">
+      <mat-card-header>
+        <mat-card-title>Top Holdings</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="summary?.topHoldings" class="mat-elevation-z0">
+          <ng-container matColumnDef="symbol">
+            <th mat-header-cell *matHeaderCellDef>Symbol</th>
+            <td mat-cell *matCellDef="let holding">{{holding.symbol}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let holding">{{holding.name}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef>Value</th>
+            <td mat-cell *matCellDef="let holding">${{holding.totalValue | number:'1.2-2'}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="change">
+            <th mat-header-cell *matHeaderCellDef>Change</th>
+            <td mat-cell *matCellDef="let holding" 
+                [ngClass]="{'positive': holding.gainLossPercentage > 0, 'negative': holding.gainLossPercentage < 0}">
+              {{holding.gainLossPercentage | number:'1.2-2'}}%
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['symbol', 'name', 'value', 'change']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['symbol', 'name', 'value', 'change'];"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="activity-card">
+      <mat-card-header>
+        <mat-card-title>Recent Activity</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="activity-list">
+          <div *ngFor="let transaction of summary?.recentTransactions" class="activity-item">
+            <div class="activity-header">
+              <span class="activity-type">{{transaction.type}}</span>
+              <span class="activity-date">{{transaction.date | date}}</span>
+            </div>
+            <div class="activity-details">
+              <span class="activity-account">{{transaction.accountName}}</span>
+              <span class="activity-amount" [ngClass]="{'positive': transaction.amount > 0, 'negative': transaction.amount < 0}">
+                ${{transaction.amount | number:'1.2-2'}}
+              </span>
+            </div>
+            <div class="activity-description">{{transaction.description}}</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div> 
